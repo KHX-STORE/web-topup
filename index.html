@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KHX STORE - Top Up Game Murah & Cepat</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,sans-serif}
+
+body{
+background:
+linear-gradient(rgba(8,8,35,0.88),rgba(8,8,35,0.95)),
+url('https://images.unsplash.com/photo-1511512578047-dfb367046420');
+background-size:cover;
+background-position:center;
+background-attachment:fixed;
+color:white;
+min-height:100vh;
+}
+
+header{
+padding:30px 20px;
+text-align:center;
+}
+
+header h1{
+font-size:28px;
+font-weight:700;
+letter-spacing:1px;
+}
+
+header p{
+font-size:14px;
+opacity:0.8;
+margin-top:5px;
+}
+
+.container{padding:20px;max-width:600px;margin:auto}
+
+.game-grid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:12px;
+margin-top:15px;
+}
+
+.game-card{
+background:rgba(255,255,255,0.1);
+padding:18px;
+border-radius:15px;
+text-align:center;
+cursor:pointer;
+transition:0.3s;
+font-weight:600;
+border:1px solid rgba(255,255,255,0.1);
+}
+
+.game-card:hover{
+background:rgba(255,255,255,0.2);
+transform:translateY(-3px);
+}
+
+.game-card.active{
+background:linear-gradient(90deg,#6a11cb,#2575fc);
+}
+
+.white-box{
+background:white;
+color:#222;
+padding:25px;
+border-radius:20px;
+margin-top:25px;
+box-shadow:0 10px 30px rgba(0,0,0,0.5);
+}
+
+input{
+width:100%;
+padding:12px;
+border-radius:10px;
+border:1px solid #ddd;
+margin-bottom:12px;
+}
+
+button{
+width:100%;
+padding:14px;
+border:none;
+border-radius:15px;
+background:linear-gradient(90deg,#6a11cb,#2575fc);
+color:white;
+font-weight:600;
+cursor:pointer;
+margin-top:10px;
+transition:0.3s;
+}
+
+button:hover{opacity:0.9}
+
+.nominal-grid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:10px;
+margin-top:15px;
+}
+
+.nominal{
+background:#f3f3f3;
+padding:15px;
+border-radius:12px;
+cursor:pointer;
+transition:0.3s;
+text-align:center;
+font-weight:600;
+}
+
+.nominal:hover{
+transform:scale(1.05);
+box-shadow:0 5px 15px rgba(100,0,255,0.4);
+}
+
+.nominal.active{
+background:linear-gradient(90deg,#6a11cb,#2575fc);
+color:white;
+}
+
+footer{
+margin-top:40px;
+padding:20px;
+text-align:center;
+font-size:13px;
+opacity:0.8;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>💎 KHX STORE</h1>
+<p>Top Up Game Murah • Cepat • Aman</p>
+</header>
+
+<div class="container">
+
+<h3>Pilih Game</h3>
+<div class="game-grid">
+<div class="game-card" onclick="pilihGame(this,'Mobile Legends')">Mobile Legends</div>
+<div class="game-card" onclick="pilihGame(this,'Free Fire')">Free Fire</div>
+<div class="game-card" onclick="pilihGame(this,'Free Fire MAX')">Free Fire MAX</div>
+<div class="game-card" onclick="pilihGame(this,'Blood Strike')">Blood Strike</div>
+</div>
+
+<div class="white-box">
+
+<h3>Masukkan ID</h3>
+<input type="text" id="gameId" placeholder="Masukkan ID Game">
+<input type="text" id="zoneId" placeholder="Zone/Server (opsional)">
+<button onclick="cekId()">Cek ID</button>
+<p id="nickname" style="margin-top:10px;font-weight:600;"></p>
+
+<h3 style="margin-top:25px;">Pilih Nominal</h3>
+<div class="nominal-grid" id="nominalContainer"></div>
+
+<button onclick="kirimWA()">Beli Sekarang</button>
+
+</div>
+</div>
+
+<footer>
+📧 muhsanillah@store.com<br>
+© 2026 KHX STORE. All Rights Reserved.
+</footer>
+
+<script>
+const WHATSAPP_NUMBER = "62882005188877";
+
+let gameDipilih = "";
+let nominalDipilih = "";
+
+const hargaGame = {
+"Mobile Legends": [
+"86 Diamond - Rp20.000",
+"172 Diamond - Rp38.000",
+"257 Diamond - Rp56.000",
+"344 Diamond - Rp74.000"
+],
+"Free Fire": [
+"70 Diamond - Rp10.000",
+"140 Diamond - Rp19.000",
+"355 Diamond - Rp48.000",
+"720 Diamond - Rp95.000"
+],
+"Free Fire MAX": [
+"100 Diamond - Rp15.000",
+"210 Diamond - Rp28.000",
+"530 Diamond - Rp70.000",
+"1080 Diamond - Rp135.000"
+],
+"Blood Strike": [
+"100 Gold - Rp15.000",
+"300 Gold - Rp40.000",
+"500 Gold - Rp65.000",
+"1000 Gold - Rp120.000"
+]
+};
+
+function pilihGame(element,game){
+gameDipilih = game;
+nominalDipilih = "";
+
+document.querySelectorAll(".game-card").forEach(el=>el.classList.remove("active"));
+element.classList.add("active");
+
+loadNominal();
+}
+
+function loadNominal(){
+const container = document.getElementById("nominalContainer");
+container.innerHTML="";
+
+if(!gameDipilih) return;
+
+hargaGame[gameDipilih].forEach(item=>{
+let div=document.createElement("div");
+div.className="nominal";
+div.innerText=item;
+div.onclick=function(){
+document.querySelectorAll(".nominal").forEach(n=>n.classList.remove("active"));
+this.classList.add("active");
+nominalDipilih=item;
+}
+container.appendChild(div);
+});
+}
+
+function cekId(){
+const id=document.getElementById("gameId").value;
+if(!id){alert("Masukkan ID dulu!");return;}
+document.getElementById("nickname").innerText="🔎 Mengecek ID...";
+setTimeout(()=>{
+document.getElementById("nickname").innerText="✅ Nickname: Player_"+id.slice(-4);
+},1200);
+}
+
+function kirimWA(){
+const id=document.getElementById("gameId").value;
+const zone=document.getElementById("zoneId").value;
+
+if(!gameDipilih || !nominalDipilih || !id){
+alert("Lengkapi data dulu!");
+return;
+}
+
+let now=new Date();
+let waktu=now.toLocaleString("id-ID");
+let invoice="INV-"+Math.floor(Math.random()*999999);
+
+let pesan=`Halo Admin KHX STORE,%0A%0A`;
+pesan+=`Saya ingin melakukan Top Up dengan detail berikut:%0A%0A`;
+pesan+=`🧾 Invoice : ${invoice}%0A`;
+pesan+=`📅 Waktu : ${waktu}%0A%0A`;
+pesan+=`🎮 Game : ${gameDipilih}%0A`;
+pesan+=`🆔 ID : ${id}%0A`;
+if(zone){pesan+=`🌐 Server : ${zone}%0A`;}
+pesan+=`💎 Nominal : ${nominalDipilih}%0A%0A`;
+pesan+=`Mohon diproses ya Admin.%0A`;
+pesan+=`Terima kasih.%0A%0A`;
+pesan+=`—%0A`;
+pesan+=`Pesan otomatis dari website KHX STORE`;
+
+window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${pesan}`);
+}
+</script>
+
+</body>
+</html>
